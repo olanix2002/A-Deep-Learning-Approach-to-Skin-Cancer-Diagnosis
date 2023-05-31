@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skin Cancer Diagnosis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #00000070;
+            backdrop-filter: blur(4px);
+            min-height: 100vh;
+            background-blend-mode: overlay;
+            background-image: url("https://i.ibb.co/B3yDkpV/pexels-larissa-megale-1076233.jpg");
+            background-size: cover;
+            background-position: center top;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #fff;
+        }
+        
+        .upload-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .upload-form input[type="file"] {
+            margin-bottom: 10px;
+        }
+        
+        .upload-form button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .result-container {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .result-container h2 {
+            color: #333;
+        }
+        
+        .result-class {
+            font-weight: bold;
+        }
+        
+        .result-confidence {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Skin Cancer Diagnosis</h1>
+    <div class="upload-form">
+        <form id="uploadForm" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput">
+            <button type="submit" id="submitButton">Predict</button>
+        </form>
+    </div>
+    <div class="result-container" id="resultContainer" style="display: none;">
+        <h2>Diagnosis Result</h2>
+        <p class="result-class" id="resultClass"></p>
+        <p class="result-confidence" id="resultConfidence"></p>
+    </div>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            submitForm();
+        });
+
+        function submitForm() {
+            var form = document.getElementById("uploadForm");
+            var fileInput = document.getElementById("fileInput");
+            var resultContainer = document.getElementById("resultContainer");
+            var resultClass = document.getElementById("resultClass");
+            var resultConfidence = document.getElementById("resultConfidence");
+
+            resultContainer.style.display = "none";
+
+            var formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/predict", true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    resultClass.innerText = "Class: " + response.class;
+                    resultConfidence.innerText = "Confidence: " + response.confidence.toFixed(2);
+                    resultContainer.style.display = "block";
+                } else {
+                    alert("Error: " + xhr.status);
+                }
+            };
+            xhr.send(formData);
+        }
+    </script>
+</body>
+</html>
